@@ -1,14 +1,26 @@
+## if the data does not exist down load it
+
+if (!file.exists("UCI HAR Dataset"))  
+  {
+  temp <- tempfile()
+  download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip",temp)
+  unzip(temp,  list = FALSE, overwrite = TRUE,
+        junkpaths = FALSE, exdir = ".", unzip = "internal",
+        setTimes = FALSE)
+  unlink(temp)
+  }
 ## read feature names into a dataset called feature
-feature_Names_File  <- "features.txt"
+
+feature_Names_File  <- "UCI HAR Dataset/features.txt"
 if (file.exists(feature_Names_File))  
   feature_Names <- read.table(feature_Names_File,  header = FALSE, sep="")
 
 ## Get Test Data *********************************************************************************##
 
 ## Point to location of the test file data formated for linux PC 
-test_Subject_file_location  <- "./test/subject_test.txt"
-test_xTest_file_location    <- "./test/X_test.txt"
-test_yTest_file_location    <- "./test/y_test.txt"
+test_Subject_file_location  <- "UCI HAR Dataset/test/subject_test.txt"
+test_xTest_file_location    <- "UCI HAR Dataset/test/X_test.txt"
+test_yTest_file_location    <- "UCI HAR Dataset/test/y_test.txt"
 
 ## Check that the file locations exist then load the file informatio into Data frames 
 ## also add names of the cololums baised on the read values 
@@ -27,9 +39,9 @@ combined_test_data <- cbind(df_test_Subject , df_Y_Test , df_X_Test )
 ## Get Train Data **********************************************************************************##
 
 ## Point to location of the test file data formated for linux PC 
-train_Subject_file_location  <- "./train/subject_train.txt"
-train_xtrain_file_location    <- "./train/X_train.txt"
-train_ytrain_file_location    <- "./train/y_train.txt"
+train_Subject_file_location  <- "UCI HAR Dataset/train/subject_train.txt"
+train_xtrain_file_location    <- "UCI HAR Dataset/train/X_train.txt"
+train_ytrain_file_location    <- "UCI HAR Dataset/train/y_train.txt"
 
 ## Check that the file locations exist then load the file informatio into Data frames 
 ## also add names of the cololums baised on the read values 
@@ -73,7 +85,7 @@ mean_std <- All_data[,c(1,2,all_std_col,all_mean_col)]
 ## read descriptive activity from file 
 
 ## read feature names into a dataset called activity_labels 
-activity_labels_File  <- "activity_labels.txt"
+activity_labels_File  <- "UCI HAR Dataset/activity_labels.txt"
 if (file.exists(activity_labels_File ))  
   activity_labels <- read.table(activity_labels_File ,  header = FALSE, sep="")
 
@@ -112,9 +124,11 @@ names(data_w_activity_label) <- gsub("\\.$","",names(data_w_activity_label))
 ## ANSWER Question 5          ##
 ##****************************##
 
-##rm(list = ls())
-##source("run_analysis.R")
 library(dplyr)
 by_activities_Subjet <- data_w_activity_label %>% group_by(Activity.Label,Subject)
 finaldata <- summarize_each(by_activities_Subjet,funs(mean))
-##write.table(finaldata,'tidyData.txt',row.name=FALSE)
+write.table(finaldata,'tidyData.txt',row.name=FALSE)
+
+##  I used the following in testing 
+##rm(list = ls())
+##source("run_analysis.R")
